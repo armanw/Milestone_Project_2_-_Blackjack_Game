@@ -1,3 +1,4 @@
+import itertools
 from enum import Enum
 from typing import List
 from cards import Card
@@ -11,6 +12,7 @@ class HandStatus(Enum):
     TWENTY_ONE = 3
     # assign any value cuz enum class requires it
 
+
 class Hand:
 
     def __init__(self):
@@ -23,29 +25,9 @@ class Hand:
         self.hand_deck.extend(added_cards)
 
     def get_hand_values(self):
-        values = []
-        for card in self.hand_deck:
-            for points in card.points:
-                values[0] = values[0] + points
-
-        for card in self.hand_deck:
-            if card.rank == "A":
-                pass
-                # values [a, b, b]
-                # values [a+1+1, a+11+1, a+11+11]
-                # [13, 3]
-                # [11,1]
-                # [14, 4, 24, 14]
-                # [2]
-                # [16, 6, 26, 16]
-                # [11,1]
-                # [16, 6, 26, 16]
-                #
-                # 1,2
-
-            # else
-            #     for values
-            #         + points
-
-
+        # list with all cards values
+        values = [card.points for card in self.hand_deck]
+        all_possibilities = itertools.product(*values)
+        all_points = set([sum(item) for item in all_possibilities])
+        return all_points
 
