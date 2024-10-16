@@ -1,23 +1,24 @@
-from cards import Card
+
+from deck import Deck
+import itertools
 
 if __name__ == "__main__":
-    deck = []
 
-    for color in Card.POSSIBLE_COLORS:
-        for rank in Card.POSSIBLE_RANKS:
-            points = []
+    # new_deck = Deck(1)
+    # print(new_deck)
+    #
+    # print(new_deck.deal(60))
+    # print(new_deck)
 
-            # assign point accordingly to rank
-            if rank.isnumeric():
-                points = [int(rank)]
-            elif rank == "A":
-                points = [11, 1]
-            else:
-                points = [10]
+    a = [5]
+    b = [1,11]
+    c = [1,11]
+    d = [8]
+    e = [a,b,c,d]
+    z = list(itertools.product(*e))
+    y = []
+    for item in z:
+        y.append(sum(item))
 
-            card = Card(color, rank, points)
-            deck.append(card)
-
-    print(len(deck))
-    print(deck)
+    print(list(set(y)))
 
