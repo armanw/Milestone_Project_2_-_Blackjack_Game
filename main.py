@@ -1,8 +1,6 @@
-
 from deck import Deck
-import itertools
-from hand import Hand
 from player import Player
+from renderer import Renderer
 
 if __name__ == "__main__":
 
@@ -11,9 +9,10 @@ if __name__ == "__main__":
 
     Zbysiu = Player("Zbysiu")
     Zbysiu.hands[0].add_cards(new_deck.deal(2))
-    print(Zbysiu.hands[0].hand_deck)
-    print(Zbysiu.hands[0].get_hand_values())
+    Renderer.display_full_hand(Zbysiu.hands[0])
+    Renderer.display_hand_points(Zbysiu.hands[0])
+    Renderer.display_first_card(Zbysiu.hands[0])
 
-
-
-
+    Zbysiu.split_cards(new_deck.deal(2))
+    Renderer.display_full_hand(Zbysiu.hands[0])
+    Renderer.display_full_hand(Zbysiu.hands[1])

@@ -1,8 +1,9 @@
 import re
+from hand import Hand
 # regex
 
 
-class Decision:
+class Question:
 
     def __init__(self, question: str, validation_rule: str, error_msg: str):
         self.question = question
@@ -24,7 +25,7 @@ class Renderer:
         print(message)
 
     @staticmethod
-    def ask_question(asked_question: Decision) -> str:
+    def ask_question(asked_question: Question) -> str:
         answer = input(asked_question.question)
 
         while not asked_question.validate(answer):
@@ -33,3 +34,16 @@ class Renderer:
             answer = input(asked_question.question)
 
         return answer.lower()
+
+    @staticmethod
+    def display_full_hand(hand: Hand):
+        # show cards on hand
+        print(hand.hand_deck)
+
+    @staticmethod
+    def display_first_card(hand: Hand):
+        print(hand.hand_deck[0])
+
+    @staticmethod
+    def display_hand_points(hand: Hand):
+        print(hand.get_hand_values())
