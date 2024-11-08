@@ -9,7 +9,7 @@ class Question:
         self.question = question
         # Is Earth flat?
         self.validation_rule = validation_rule
-        # [ynYN]
+        # [ynYN] -> Regex
         self.error_msg = error_msg
         # 'Can you write...?'
 

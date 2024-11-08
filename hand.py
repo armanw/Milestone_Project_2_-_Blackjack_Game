@@ -27,6 +27,7 @@ class Hand:
     def get_hand_values(self):
         # list with all cards values
         values = [card.points for card in self.hand_deck]
+        # iloczyn kartezjański:
         all_possibilities = itertools.product(*values)
         all_points = set([sum(item) for item in all_possibilities])
         return all_points
