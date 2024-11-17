@@ -35,3 +35,34 @@ class Game:
             bet_amount = int(Renderer.ask_question(bet_question))
 
         self.player1.place_bet(bet_amount)
+        Renderer.display_message("Let's start the game!")
+        #dealer's turn
+        self.dealer_hand.add_cards(playing_deck.deal(2))
+        Renderer.display_message("Dealer's first card: ")
+        Renderer.display_first_card(self.dealer_hand)
+
+        insurance_question = Question(
+            question="Would you like to take insurance? Y/N?",
+            validation_rule=r'[yYnN]',
+            error_msg="Type Y for yes and N for no"
+        )
+        split_question = Question(
+            question="Would you like to split the hand? Y/N",
+            validation_rule=r'[yYnN]',
+            error_msg="Type Y for yes and N for no"
+        )
+        stand_question = Question(
+            question="Would you like to stand? Y/N",
+            validation_rule=r'[yYnN]',
+            error_msg="Type Y for yes and N for no"
+        )
+
+        #dobieranie się do rank pierwszej karty z ręki dilera <3 <3 <3
+        #placeholder na insurance
+
+        self.player1.hands[0] = Hand() #adding player's first hand
+        self.player1.hands[0].add_cards(playing_deck.deal(2)) #giving 2 cards
+        Renderer.display_full_hand(self.player1.hands[0]) # show cards
+
+        #placeholder for split, for now there is only one hand
+
