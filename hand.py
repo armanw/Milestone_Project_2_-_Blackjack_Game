@@ -32,3 +32,5 @@ class Hand:
         all_points = set([sum(item) for item in all_possibilities])
         return all_points
 
+    def has_matching_cards(self):
+        return self.hand_deck[0].rank == self.hand_deck[1].rank

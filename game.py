@@ -57,12 +57,35 @@ class Game:
             error_msg="Type Y for yes and N for no"
         )
 
-        #dobieranie się do rank pierwszej karty z ręki dilera <3 <3 <3
-        #placeholder na insurance
+        #getting to dealer's first card's rank
+        dealer_1card_rank = self.dealer_hand.hand_deck[0].rank #assigned to var, cuz me can
+        #dealer_1card_rank = "A" # FOR TESTING
+        if dealer_1card_rank == "A":
+            Renderer.display_message(
+                f"Dealer's first card's rank is: {dealer_1card_rank}, "
+                f"do you want to place insurance?") # looks stupid, but clear communication is good
+            wants_insurance = Renderer.ask_question(insurance_question).lower()
+
+            if wants_insurance == "y":
+                self.player1.insurance = True
+                # no money here, cuz it's always 50%
 
         self.player1.hands[0] = Hand() #adding player's first hand
         self.player1.hands[0].add_cards(playing_deck.deal(2)) #giving 2 cards
         Renderer.display_full_hand(self.player1.hands[0]) # show cards
 
+            # uncomment for TEST FOR SPLIT
+        #matching = True
+        #if matching:
+
+        if self.player1.hands[0].has_matching_cards():
+            if Renderer.ask_question(split_question).lower() == "y":
+                self.player1.split_cards(playing_deck.deal(2))
+                #print("i;m here")
         #placeholder for split, for now there is only one hand
+
+        # TO DO: find a way to display all hands or something, if there is one hand it throws error
+        #Renderer.display_full_hand(self.player1.hands[0])
+        #Renderer.display_full_hand(self.player1.hands[1]) # FOR TESTING SPLIT
+
 

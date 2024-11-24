@@ -16,7 +16,7 @@ class Player:
         self.hands.append(Hand())
         # pop card from one hand, add to another
         self.hands[1].add_cards([self.hands[0].hand_deck.pop()])
-
+        #deal 2 cards and add
         self.hands[0].add_cards([cards[0]])
         self.hands[1].add_cards([cards[1]])
 
