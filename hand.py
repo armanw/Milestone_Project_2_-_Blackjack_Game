@@ -10,6 +10,7 @@ class HandStatus(Enum):
     LOST = 1,
     STAND = 2,
     TWENTY_ONE = 3
+    BLACKJACK = 4
     # assign any value cuz enum class requires it
 
 

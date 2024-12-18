@@ -1,7 +1,9 @@
 from typing import List
+
+import player
 from player import Player
 from deck import Deck
-from hand import Hand
+from hand import Hand, HandStatus
 from renderer import Renderer, Question
 
 
@@ -38,6 +40,8 @@ class Game:
         Renderer.display_message("Let's start the game!")
         #dealer's turn
         self.dealer_hand.add_cards(playing_deck.deal(2))
+        if any([x==21 for x in self.dealer_hand.get_hand_values()]):
+            self.dealer_hand.status = HandStatus.BLACKJACK
         Renderer.display_message("Dealer's first card: ")
         Renderer.display_first_card(self.dealer_hand)
 
@@ -48,11 +52,6 @@ class Game:
         )
         split_question = Question(
             question="Would you like to split the hand? Y/N",
-            validation_rule=r'[yYnN]',
-            error_msg="Type Y for yes and N for no"
-        )
-        stand_question = Question(
-            question="Would you like to stand? Y/N",
             validation_rule=r'[yYnN]',
             error_msg="Type Y for yes and N for no"
         )
@@ -68,10 +67,13 @@ class Game:
 
             if wants_insurance == "y":
                 self.player1.insurance = True
-                # no money here, cuz it's always 50%
+                self.player1.balance -= 0.5 * self.player1.bet
 
         self.player1.hands[0] = Hand() #adding player's first hand
         self.player1.hands[0].add_cards(playing_deck.deal(2)) #giving 2 cards
+        if any([x==21 for x in self.player1.hands[0].get_hand_values()]):
+            self.player1.hands[0].status = HandStatus.BLACKJACK
+            #if first deal is blackjack then status is blackjack
         Renderer.display_full_hand(self.player1.hands[0]) # show cards
 
             # uncomment for TEST FOR SPLIT
@@ -81,11 +83,78 @@ class Game:
         if self.player1.hands[0].has_matching_cards():
             if Renderer.ask_question(split_question).lower() == "y":
                 self.player1.split_cards(playing_deck.deal(2))
-                #print("i;m here")
-        #placeholder for split, for now there is only one hand
-
-        # TO DO: find a way to display all hands or something, if there is one hand it throws error
-        #Renderer.display_full_hand(self.player1.hands[0])
-        #Renderer.display_full_hand(self.player1.hands[1]) # FOR TESTING SPLIT
 
 
+        hit_or_stand_question = Question(
+            question="Would you like to HIT or STAND? Type H or S: ",
+            validation_rule=r'[hHsS]',
+            error_msg="Type H for Hit or S for stand"
+        )
+
+        for hand in self.player1.hands:
+
+            if hand.status != HandStatus.IN_PLAY:
+                continue #if true, next iteration
+            # Renderer.display_full_hand(hand)
+
+            next_action = Renderer.ask_question(hit_or_stand_question)
+            while next_action == 'h' and hand.status == HandStatus.IN_PLAY:
+                hand.add_cards(playing_deck.deal())
+
+                if any([x==21 for x in hand.get_hand_values()]):
+                    hand.status = HandStatus.TWENTY_ONE
+                elif all([x>21 for x in hand.get_hand_values()]):
+                    hand.status = HandStatus.LOST
+                else:
+                    Renderer.display_full_hand(hand)
+                    next_action = Renderer.ask_question(hit_or_stand_question)
+
+            if next_action == 's':
+                hand.status = HandStatus.STAND
+
+            # Renderer.display_message(str(hand.status)) # FOR TEST!!!
+
+        #if dealer already has blackjack, below has no effect
+        while any([x<17 for x in self.dealer_hand.get_hand_values()]):
+            self.dealer_hand.add_cards(playing_deck.deal())
+            if any([x == 21 for x in self.dealer_hand.get_hand_values()]):
+                self.dealer_hand.status = HandStatus.TWENTY_ONE
+            elif all([x > 21 for x in self.dealer_hand.get_hand_values()]):
+                self.dealer_hand.status = HandStatus.LOST
+
+        if self.dealer_hand.status == HandStatus.IN_PLAY:
+            self.dealer_hand.status = HandStatus.STAND
+
+        for hand in self.player1.hands:
+            if (hand.status == HandStatus.STAND) and (self.dealer_hand.status == HandStatus.STAND):
+                player_max = max([x for x in hand.get_hand_values() if x<=21])
+                dealer_max = max([x for x in self.dealer_hand.get_hand_values() if x<=21])
+
+                if player_max > dealer_max:
+                    Renderer.display_message("Congrats, you won!")
+                    self.player1.balance += self.player1.bet
+                    if hand.status == HandStatus.BLACKJACK:
+                        self.player1.balance += 0.5 * self.player1.bet
+
+                elif player_max == dealer_max:
+                    Renderer.display_message("Tie!")
+
+                else:
+                    Renderer.display_message("you lost XD!")
+
+
+            elif hand.status.value > self.dealer_hand.status.value:
+                Renderer.display_message("Congrats, you won!")
+                self.player1.balance += self.player1.bet
+                if hand.status == HandStatus.BLACKJACK:
+                    self.player1.balance += 0.5 * self.player1.bet
+
+            elif hand.status.value == self.dealer_hand.status.value:
+                Renderer.display_message("Tie!")
+            else:
+                Renderer.display_message("you lost XD!")
+
+        if self.player1.insurance and self.dealer_hand.status == HandStatus.BLACKJACK:
+            self.player1.balance += 2*0.5 * self.player1.bet
+
+        Renderer.display_message(f"Your current balance is: {self.player1.balance}")
